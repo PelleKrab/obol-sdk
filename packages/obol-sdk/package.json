@@ -1,32 +1,31 @@
 {
-  "name": "@0xsplits/splits-sdk",
-  "version": "2.7.0",
-  "description": "SDK for the 0xSplits protocol",
+  "name": "@obolnetwork/obol-sdk",
+  "version": "0.1.0",
+  "description": "SDK for the Obol Network",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "keywords": [
-    "0xSplits",
-    "splits",
+    "Obol",
+    "Distributed Validators",
     "ethereum"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf dist && tsc && cp -r src/artifacts src/typechain dist/"
   },
-  "author": "0xSplits (https://0xsplits.com)",
+  "author": "Obol Labs (https://obol.tech)",
   "publishConfig": {
     "access": "public"
   },
-  "funding": "https://app.0xsplits.xyz/accounts/0xF8843981e7846945960f53243cA2Fd42a579f719/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/0xSplits/splits-sdk.git"
+    "url": "git+https://github.com/obolnetwork/obol-sdk.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/0xSplits/splits-sdk/issues"
+    "url": "https://github.com/obolnetwork/obol-sdk/issues"
   },
-  "homepage": "https://docs.0xsplits.xyz/sdk-info/overview",
+  "homepage": "https://docs.obol.tech/",
   "dependencies": {
     "abi-coder": "^4.1.1",
     "base-64": "^1.0.0",
