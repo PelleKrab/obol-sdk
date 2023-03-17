@@ -1,5 +1,5 @@
 {
-  "name": "0xsplits",
+  "name": "obol-sdk",
   "private": true,
   "scripts": {
     "lerna-build": "lerna run build",
