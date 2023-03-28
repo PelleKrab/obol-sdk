@@ -14,13 +14,13 @@ export abstract class Base {
   }
 
   protected request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
+    const url = `${this.baseUrl}${endpoint}`
     const config = {
       ...options,
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers
+      }
     };
 
     return fetch(url, config).then((response) => {

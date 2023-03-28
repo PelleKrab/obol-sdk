@@ -9,7 +9,7 @@ type ClusterOperator = {
 
 type ClusterCreator = {
   address: string;
-  config_signature: string;
+  config_signature?: string;
 }
 
 type ClusterValidator  = {

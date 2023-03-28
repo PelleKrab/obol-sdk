@@ -5,19 +5,40 @@ import { Cluster } from '../../types';
 
 export class Clusters extends Base {
 
-    createCluster(newCluster: Cluster): Promise<Cluster> {
+    /**
+     * @param cluster The new unique cluster
+     * @returns The saved cluster from DB
+    */
+    createCluster(newCluster: Cluster, creatorConfigSignature: string): Promise<Cluster> {
         return this.request(`/dv`, {
             method: 'POST',
             body: JSON.stringify(newCluster),
             headers: {
-                Authorization: `Bearer ${newCluster?.creator.config_signature}`,
+                Authorization: `Bearer ${creatorConfigSignature}`,
+                "fork-version": newCluster.fork_version,
             }
         });
     }
 
-    getCluster(configHash: string): Promise<Cluster> {
+    // /**
+    //  * @param configHash The config hash of the requested cluster
+    //  * @returns The matched cluster from DB
+    // */
+    // getCluster(configHash: string): Promise<Cluster> {
+    //     return this.request(`/dv/${configHash}`, {
+    //         method: 'GET',
+    //     });
+    // }
+
+
+    //To be used only in testing
+    /**
+     * @param configHash The config hash of the cluster to be deleted
+     * @returns The deleted cluster data
+    */
+    deleteCluster(configHash: string): Promise<Cluster> {
         return this.request(`/dv/${configHash}`, {
-            method: 'GET',
+            method: 'DELETE',
         });
     }
 }
