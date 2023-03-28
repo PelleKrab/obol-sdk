@@ -1,4 +1,4 @@
-import { Library } from "@obolNetwork/obol-sdk";
+import { Library } from "@obolnetwork/obol-sdk";
 
 const client: Library = new Library({});
 

@@ -954,7 +954,7 @@
   dependencies:
     nx "15.8.9"
 
-"@obolnetwork/obol-sdk@file:/Users/hananibrahimnouman/Desktop/obol-sdk/packages/obol-sdk":
+"@obolnetwork/obol-sdk@0.1.0", "@obolnetwork/obol-sdk@file:/Users/hananibrahimnouman/Desktop/obol-sdk/packages/obol-sdk":
   version "0.1.0"
   resolved "file:packages/obol-sdk"
   dependencies:
@@ -5681,8 +5681,6 @@ safe-buffer@~5.2.0:
 "sdk-test@file:/Users/hananibrahimnouman/Desktop/obol-sdk/packages/sdk-test":
   version "0.1.0"
   resolved "file:packages/sdk-test"
-  dependencies:
-    cross-fetch "^3.1.5"
 
 semver@^5.6.0:
   version "5.7.1"

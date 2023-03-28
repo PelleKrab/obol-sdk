@@ -10,9 +10,7 @@
     "ethereum"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc",
-    "dev": "node start --watch --tsconfig tsconfig.json"
-
+    "build": "rm -rf dist && tsc"
   },
   "author": "Obol Labs (https://obol.tech)",
   "publishConfig": {
