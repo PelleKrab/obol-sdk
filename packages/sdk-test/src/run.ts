@@ -1,6 +1,6 @@
-import  Typicode  from "@obolnetwork/obol-sdk";
+import  {Client}  from "@obolnetwork/obol-sdk";
 
-const client: Typicode = new Typicode({});
+const client: Client = new Client({});
 
 client.createCluster({
   name: "testSDK",

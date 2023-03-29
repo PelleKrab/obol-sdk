@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "start:dev": "node . --watch"
+    "start": "node dist/run.js"
   },
   "author": "Obol Labs (https://obol.tech)",
   "publishConfig": {
