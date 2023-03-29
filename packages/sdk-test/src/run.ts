@@ -1,4 +1,4 @@
-import  {Client}  from "@obolnetwork/obol-sdk";
+import { Client } from "@obolnetwork/obol-sdk";
 
 const client: Client = new Client({});
 
@@ -28,12 +28,12 @@ client.createCluster({
   }],
   version: "v1.5.0"
 }, "0xd6e8dfe49ad2337472ba791ad7e89060dd5eda1fd805407a9f7f0ad8b3da4d4a533d21074bd87afebaa659b36f44b7168f15d9de010738244ec05adcc8398dea1c")
-  .then((c) => {
+  .then((c: any) => {
     console.log(`Created new cluster with creator address ${c.creator.address}`);
     client.deleteCluster("0xeb99f244ca6e7ea963c10a4b81c5f604fd8250cdfc1e01221f4d92686cd436fb")
       .then(() => {
         console.log(`Cluster is deleted`);
       });
-  });
+  }).catch((err: any) => { console.log(err); });
 
 
