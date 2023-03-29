@@ -1,9 +1,10 @@
+import { Base } from "./resources/base";
 import { Clusters } from './resources/clusters';
+import { applyMixins } from "./utils";
 
-export class Library {
-  clusters: Clusters;
+class Typicode extends Base {}
+interface Typicode extends Clusters {}
 
-  constructor(config: {baseUrl?: string }) {
-    this.clusters = new Clusters(config);
-  }
-}
+applyMixins(Typicode, [Clusters]);
+
+export default Typicode;

@@ -2,15 +2,15 @@
   "name": "sdk-test",
   "version": "0.1.0",
   "description": "SDK for the Obol Network",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/run.js",
   "keywords": [
     "Obol",
     "Distributed Validators",
     "ethereum"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "start:dev": "node . --watch"
   },
   "author": "Obol Labs (https://obol.tech)",
   "publishConfig": {

@@ -1,8 +1,8 @@
-import { Library } from "@obolnetwork/obol-sdk";
+import  Typicode  from "@obolnetwork/obol-sdk";
 
-const client: Library = new Library({});
+const client: Typicode = new Typicode({});
 
-client.clusters.createCluster({
+client.createCluster({
   name: "testSDK",
   uuid: "30a4ea89-4693-481a-bba7-a314025e1633",
   config_hash: "0xeb99f244ca6e7ea963c10a4b81c5f604fd8250cdfc1e01221f4d92686cd436fb",
@@ -30,7 +30,7 @@ client.clusters.createCluster({
 }, "0xd6e8dfe49ad2337472ba791ad7e89060dd5eda1fd805407a9f7f0ad8b3da4d4a533d21074bd87afebaa659b36f44b7168f15d9de010738244ec05adcc8398dea1c")
   .then((c) => {
     console.log(`Created new cluster with creator address ${c.creator.address}`);
-    client.clusters.deleteCluster("0xeb99f244ca6e7ea963c10a4b81c5f604fd8250cdfc1e01221f4d92686cd436fb")
+    client.deleteCluster("0xeb99f244ca6e7ea963c10a4b81c5f604fd8250cdfc1e01221f4d92686cd436fb")
       .then(() => {
         console.log(`Cluster is deleted`);
       });
