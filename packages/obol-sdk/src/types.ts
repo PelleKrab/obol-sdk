@@ -17,21 +17,21 @@ type ClusterValidator  = {
   withdrawal_address: string;
 }
 
-
-
-
-export type Cluster = {
+export interface ClusterPayload  {
   name:string;
   operators:ClusterOperator[] ;
-  creator:ClusterCreator;
-  uuid: string;
-  version: string;
   num_validators: number;
-  threshold:number;
+  validators: ClusterValidator[];
+};
+
+export interface Cluster extends ClusterPayload{
+  creator:ClusterCreator;
+  version: string;
   dkg_algorithm:string;
   fork_version:string;
+  uuid: string;
   timestamp:string;
-  validators: ClusterValidator[];
   config_hash:string;
+  threshold:number;
 };
 
