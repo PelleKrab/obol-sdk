@@ -1,11 +1,10 @@
 // src/resources/base.ts
-
-import fetch from 'cross-fetch';
-import { FORK_MAPPING } from './constants';
+import { DEFAULT_BASE_URL, DEFAULT_CHAIN_ID, SDK_VERSION } from './constants.js';
+import { FORK_MAPPING } from './types.js';
 
 type Config = {
   baseUrl?: string;
-  chainId?: number;
+  chainId?: FORK_MAPPING;
 };
 
 export abstract class Base {
@@ -15,10 +14,7 @@ export abstract class Base {
 
 
 
-  constructor({ baseUrl = 'https://obol-api-dev.gcp.obol.tech', chainId = 5 }: Config) {
-    if (chainId == 1) {
-      throw new Error('Invalid ChainId');
-    }
+  constructor({ baseUrl = DEFAULT_BASE_URL, chainId = DEFAULT_CHAIN_ID }: Config) {
     this.baseUrl = baseUrl;
     this.chainId = chainId;
     this.fork_version = FORK_MAPPING[this.chainId]
@@ -30,6 +26,7 @@ export abstract class Base {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'User-Agent': `Obol-SDK/${SDK_VERSION}`,
         ...options?.headers
       }
     };
@@ -37,7 +34,7 @@ export abstract class Base {
     try {
       const response = await fetch(url, config);
       if (response.ok) {
-        return response.json();
+          return (await response.json())
       }
       throw new Error(response.statusText);
     } catch (e) {

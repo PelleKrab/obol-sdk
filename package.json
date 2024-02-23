@@ -1,36 +1,93 @@
 {
-  "name": "obol-sdk",
-  "private": true,
+  "name": "@obolnetwork/obol-sdk",
+  "version": "1.0.10",
+  "description": "A package for creating Distributed Validators using the Obol API.",
+  "bugs": {
+    "url": "https://github.com/obolnetwork/obol-packages/issues"
+  },
+  "homepage": "https://docs.obol.tech/",
+  "keywords": [
+    "Obol",
+    "Distributed Validators",
+    "Ethereum"
+  ],
   "scripts": {
-    "lerna-build": "lerna run build",
-    "eslint": "eslint . --ext '.ts,.tsx'",
-    "eslint:fix": "eslint . --ext '.ts,.tsx' --fix",
-    "prettier": "prettier --check --config .prettierrc './**/src/*.{.js,jsx,ts,tsx}'",
-    "prettier:fix": "prettier --config .prettierrc './**/src/*.{.js,jsx,ts,tsx}' --write",
-    "lerna-version": "lerna version --no-private"
+    "compile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
+    "build:clean": "rm -rf ./dist",
+    "build": "npm-run-all build:clean compile",
+    "test": "jest ./test/methods.test.ts",
+    "generate-typedoc": "typedoc",
+    "ds:release:major": "npm version $(semver $npm_package_version -i major) && npm publish --tag latest",
+    "ds:release:minor": "npm version $(semver $npm_package_version -i minor) && npm publish --tag latest",
+    "ds:release:patch": "npm version $(semver $npm_package_version -i patch) && npm publish --tag latest"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "typings": "./dist/types/src/index.d.ts",
+  "author": "Obol Labs (https://obol.tech)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obolnetwork/obol-packages.git"
   },
-  "devDependencies": {
-    "@types/jest": "^28.1.8",
-    "@types/supertest": "^2.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "@typescript-eslint/parser": "^5.30.6",
-    "eslint": "^8.19.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-no-loops": "^0.3.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "jest": "^28.1.3",
-    "lerna": "^6.4.0",
-    "prettier": "2.7.1",
-    "supertest": "^6.3.3",
-    "ts-jest": "^28.0.8",
-    "typescript": "^4.7.4"
+  "license": "ISC",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "dependencies": {
-    "ethers": "^6.4.0"
+    "@chainsafe/bls": "6.0.3",
+    "@chainsafe/blst": "^0.2.9",
+    "@chainsafe/discv5": "^0.5.1",
+    "@chainsafe/ssz": "^0.14.0",
+    "@metamask/eth-sig-util": "^7.0.1",
+    "ajv": "^8.12.0",
+    "cross-fetch": "^3.1.5",
+    "elliptic": "^6.5.4",
+    "ethers": "^6.4.0",
+    "nock": "^13.5.3",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/elliptic": "^6.4.18",
+    "@types/jest": "^28.1.8",
+    "@types/node": "^20.2.5",
+    "@types/uuid": "^9.0.1",
+    "eslint": "^8.6.0",
+    "jest": "^28.1.3",
+    "msw": "^2.2.1",
+    "npm-run-all": "^4.1.5",
+    "ts-jest": "^28.0.8",
+    "tsup": "^6.7.0",
+    "typedoc": "^0.25.7",
+    "typedoc-plugin-markdown": "^4.0.0-next.50",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "files": [
+    "package.json",
+    "README.md",
+    "dist",
+    "src"
+  ],
+  "jest": {
+    "transform": {
+      "\\.[jt]sx?$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    },
+    "moduleNameMapper": {
+      "^bn.js$": "<rootDir>/node_modules/bn.js",
+      "^asn1.js$": "<rootDir>/node_modules/asn1.js",
+      "^hash.js$": "<rootDir>/node_modules/hash.js",
+      "(.+)\\.js": "$1"
+    },
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ]
   }
 }
