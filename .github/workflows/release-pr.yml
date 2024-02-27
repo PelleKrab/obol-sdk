@@ -24,18 +24,20 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       
-          - name: Setup node
-      
-      - uses: actions/setup-node@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
           cache: npm
+
+      - name: Install dependancies
+        run: yarn install --frozen-lockfile
 
       - name: Prepare release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TYPE_ARG: ${{ fromJSON('{"auto":"", "patch":"patch", "minor":"minor", "major":"major"}')[github.event.inputs.type] }}
-        run: npm run release -- $TYPE_ARG --ci --verbose --no-git.push --no-git.commit --no-git.tag --no-github
+        run: yarn run release $TYPE_ARG --ci --verbose --no-git.push --no-git.commit --no-git.tag --no-github
       
       - name: Show git status
         if: failure()
@@ -48,12 +50,6 @@ jobs:
       - name: Extract release notes
         id: extract-release-notes
         uses: ffurrer2/extract-release-notes@v1
-
-      - name: Generate PR body
-        id: body
-        uses: mathiasvr/command-output@v1
-        with:
-          run: node ./bin/pr.js
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v4

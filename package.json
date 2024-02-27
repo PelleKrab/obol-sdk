@@ -55,6 +55,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^8.0.1",
     "@types/elliptic": "^6.4.18",
     "@types/jest": "^28.1.8",
     "@types/node": "^20.2.5",
@@ -78,6 +79,31 @@
     "dist",
     "src"
   ],
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): v${version}",
+      "push": true,
+      "commit": true,
+      "tag": true,
+      "requireCommits": false,
+      "requireCleanWorkingDir": false
+    },
+    "github": {
+      "release": true,
+      "draft": true
+    },
+    "npm": {
+      "publish": false,
+      "ignoreVersion": false
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "eslint",
+        "infile": "CHANGELOG.md",
+        "header": "# Changelog"
+      }
+    }
+  },
   "jest": {
     "transform": {
       "\\.[jt]sx?$": "ts-jest"
