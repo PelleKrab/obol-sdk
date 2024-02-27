@@ -1,6 +1,6 @@
 {
   "name": "@obolnetwork/obol-sdk",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "A package for creating Distributed Validators using the Obol API.",
   "bugs": {
     "url": "https://github.com/obolnetwork/obol-packages/issues"
@@ -17,6 +17,7 @@
     "build": "npm-run-all build:clean compile",
     "test": "jest ./test/methods.test.ts",
     "generate-typedoc": "typedoc",
+    "ds:release": "npm publish --tag latest",
     "ds:release:major": "npm version $(semver $npm_package_version -i major) && npm publish --tag latest",
     "ds:release:minor": "npm version $(semver $npm_package_version -i minor) && npm publish --tag latest",
     "ds:release:patch": "npm version $(semver $npm_package_version -i patch) && npm publish --tag latest"

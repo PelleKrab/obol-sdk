@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.head.label == 'obol-sdk:release')
     runs-on: ubuntu-latest
 
     steps:
@@ -18,12 +19,43 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
+          scope: '@obolnetwork'
 
-      - run: npm ci
+      - name: Configure git
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-      - run: npm run build
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
 
-      - run: npm run ds:release:patch
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v1
+
+      ############# TAG RELEASE ##############
+      - name: "Push tag v${{ steps.package-version.outputs.current-version }}"
+        uses: rickstaa/action-create-tag@v1
+        id: tag_version
+        with:
+          tag: "v${{ steps.package-version.outputs.current-version }}"
+      
+      ############# GITHUB RELEASE ##############
+      - name: "Create a GitHub release v${{ steps.package-version.outputs.current-version }}"
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v${{ steps.package-version.outputs.current-version }}"
+          name: "Release v${{ steps.package-version.outputs.current-version }}"
+          body: |
+            ## Release notes:
+            ${{ steps.extract-release-notes.outputs.release_notes }}
+      
+      ############# NPM RELEASE ##############
+      - run: yarn install --frozen-lockfile
+      - run: yarn run build
+      - run: yarn run generate-typedoc 
+      - run: yarn run ds:release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           HUSKY: 0
