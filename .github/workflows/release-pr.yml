@@ -41,7 +41,7 @@ jobs:
       
       - name: Update e2e dependencies
         working-directory: ./test/sdk-package-test
-        run: yarn install
+        run: yarn upgrade
 
       - name: Show git status
         if: failure()
