@@ -17,7 +17,7 @@ import {
   type ClusterPayload,
   type OperatorPayload,
 } from './types.js'
-import { clusterConfigOrDefinitionHash } from './hash.js'
+import { clusterConfigOrDefinitionHash } from './verification/common.js'
 import { validatePayload } from './ajv.js'
 import { definitionSchema, operatorPayloadSchema } from './schema.js'
 export * from './types.js'

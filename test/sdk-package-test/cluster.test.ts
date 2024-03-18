@@ -1,6 +1,6 @@
 import request from 'supertest'
 import dotenv from 'dotenv'
-import { clusterConfig, clusterLockV1X7, enr } from './fixtures'
+import { clusterConfigV1X7, clusterLockV1X6, clusterLockV1X7, clusterLockV1X8, enr } from './../fixtures'
 import {
   client,
   updateClusterDef,
@@ -27,12 +27,12 @@ describe('Cluster Definition', () => {
   let clusterDefinition: ClusterDefintion
   let secondConfigHash: string
   const clientWithoutAsigner = new Client({
-    baseUrl: 'https://obol-api-dev.gcp.obol.tech',
+    baseUrl: 'https://obol-api-nonprod-dev.dev.obol.tech',
     chainId: 17000,
   })
 
   beforeAll(async () => {
-    configHash = await client.createClusterDefinition(clusterConfig)
+    configHash = await client.createClusterDefinition(clusterConfigV1X7)
   })
 
   it('should post a cluster definition and return confighash', async () => {
@@ -41,7 +41,7 @@ describe('Cluster Definition', () => {
 
   it('should throw on post a cluster without a signer', async () => {
     try {
-      await clientWithoutAsigner.createClusterDefinition(clusterConfig)
+      await clientWithoutAsigner.createClusterDefinition(clusterConfigV1X7)
     } catch (err: any) {
       expect(err.message).toEqual('Signer is required in createClusterDefinition')
     }
@@ -71,9 +71,9 @@ describe('Cluster Definition', () => {
 
   it('should update the cluster which the operator belongs to', async () => {
     const signerAddress = await signer.getAddress()
-    clusterConfig.operators.push({ address: signerAddress })
+    clusterConfigV1X7.operators.push({ address: signerAddress })
 
-    secondConfigHash = await client.createClusterDefinition(clusterConfig)
+    secondConfigHash = await client.createClusterDefinition(clusterConfigV1X7)
 
     const definitionData: ClusterDefintion =
       await client.acceptClusterDefinition(
@@ -111,7 +111,7 @@ describe('Poll Cluster Lock', () => {
   const { definition_hash: _, ...rest } = clusterLockV1X7.cluster_definition
   const clusterWithoutDefHash = rest
   const clientWithoutAsigner = new Client({
-    baseUrl: 'https://obol-api-dev.gcp.obol.tech',
+    baseUrl: 'https://obol-api-nonprod-dev.dev.obol.tech',
     chainId: 17000,
   })
 
@@ -192,10 +192,12 @@ describe('Poll Cluster Lock', () => {
     )
   })
 
-  it('should return true on verified cluster lock', async () => {
-    const isValidLock: boolean = await validateClusterLock(clusterLockV1X7)
-    expect(isValidLock).toEqual(true)
-  })
+  test.each([{ version: 'v1.6.0', clusterLock: clusterLockV1X6 }, { version: 'v1.7.0', clusterLock: clusterLockV1X7 }, { version: 'v1.8.0', clusterLock: clusterLockV1X8 }])(
+    '$version: \'should return true on verified cluster lock\'',
+    async ({ clusterLock }) => {
+      const isValidLock: boolean = await validateClusterLock(clusterLock)
+      expect(isValidLock).toEqual(true)
+    })
 
   afterAll(async () => {
     const configHash = clusterLockV1X7.cluster_definition.config_hash

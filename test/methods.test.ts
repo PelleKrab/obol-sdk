@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { Client, validateClusterLock } from '../src/index'
-import { clusterConfig, clusterLockV1X7 } from './fixtures.js'
+import { clusterConfigV1X7, clusterLockV1X6, clusterLockV1X7, clusterLockV1X8 } from './fixtures.js'
 import { SDK_VERSION } from '../src/constants'
 import { Base } from '../src/base'
 import { validatePayload } from '../src/ajv'
@@ -35,7 +35,7 @@ describe('Cluster Client', () => {
       .mockReturnValue(Promise.resolve({ config_hash: mockConfigHash }))
 
     const configHash =
-      await clientInstance.createClusterDefinition(clusterConfig)
+      await clientInstance.createClusterDefinition(clusterConfigV1X7)
     expect(configHash).toEqual(mockConfigHash)
   })
 
@@ -60,7 +60,7 @@ describe('Cluster Client', () => {
       .mockReturnValue(Promise.resolve({ config_hash: mockConfigHash }))
     try {
       await clientInstance.createClusterDefinition({
-        ...clusterConfig,
+        ...clusterConfigV1X7,
         operators: [],
       })
     } catch (error: any) {
@@ -72,7 +72,7 @@ describe('Cluster Client', () => {
 
   test('validatePayload should throw an error on empty schema', async () => {
     try {
-      validatePayload({ ...clusterConfig, operators: [] }, '')
+      validatePayload({ ...clusterConfigV1X7, operators: [] }, '')
     } catch (error: any) {
       expect(error.message).toEqual('schema must be object or boolean')
     }
@@ -86,6 +86,7 @@ describe('Cluster Client', () => {
     const clusterDefinition = await clientInstance.getClusterDefinition(
       clusterLockV1X7.cluster_definition.config_hash,
     )
+
     expect(clusterDefinition.config_hash).toEqual(
       clusterLockV1X7.cluster_definition.config_hash,
     )
@@ -139,7 +140,7 @@ describe('Cluster Client without a signer', () => {
 
   test('createClusterDefinition should throw an error without signer', async () => {
     try {
-      await clientInstance.createClusterDefinition(clusterConfig)
+      await clientInstance.createClusterDefinition(clusterConfigV1X7)
     } catch (err: any) {
       expect(err.message).toEqual('Signer is required in createClusterDefinition')
     }
@@ -183,8 +184,10 @@ describe('Cluster Client without a signer', () => {
     expect(clusterLock.lock_hash).toEqual(clusterLockV1X7.lock_hash)
   })
 
-  it('should return true on verified cluster lock', async () => {
-    const isValidLock: boolean = await validateClusterLock(clusterLockV1X7)
-    expect(isValidLock).toEqual(true)
-  })
+  test.each([{ version: 'v1.6.0', clusterLock: clusterLockV1X6 }, { version: 'v1.7.0', clusterLock: clusterLockV1X7 }, { version: 'v1.8.0', clusterLock: clusterLockV1X8 }])(
+    '$version: \'should return true on verified cluster lock\'',
+    async ({ clusterLock }) => {
+      const isValidLock: boolean = await validateClusterLock(clusterLock)
+      expect(isValidLock).toEqual(true)
+    })
 })

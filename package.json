@@ -1,6 +1,6 @@
 {
   "name": "@obolnetwork/obol-sdk",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A package for creating Distributed Validators using the Obol API.",
   "bugs": {
     "url": "https://github.com/obolnetwork/obol-sdk/issues"
@@ -51,6 +51,7 @@
     "ethers": "^6.4.0",
     "nock": "^13.5.3",
     "release-it": "^17.1.1",
+    "semver": "^7.6.0",
     "typescript-eslint": "^7.1.0",
     "uuid": "^9.0.0"
   },
