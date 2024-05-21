@@ -9,6 +9,12 @@ export const EIP712_DOMAIN_VERSION = '1'
 export const CreatorConfigHashSigningTypes = {
   CreatorConfigHash: [{ name: 'creator_config_hash', type: 'string' }],
 }
+export const TermsAndConditionsSigningTypes = {
+  TermsAndConditions: [
+    { name: 'terms_and_conditions_hash', type: 'string' },
+    { name: 'version', type: 'uint256' },
+  ]
+}
 
 const EIP712Domain = [
   { name: 'name', type: 'string' },
@@ -16,12 +22,15 @@ const EIP712Domain = [
   { name: 'chainId', type: 'uint256' },
 ]
 
-export const Domain = (chainId: number): TypedDataDomain => {
-  return {
+export const Domain = (chainId?: number): TypedDataDomain => {
+  const typeDataDomain: any = {
     name: EIP712_DOMAIN_NAME,
     version: EIP712_DOMAIN_VERSION,
-    chainId,
   }
+  if (chainId) {
+    typeDataDomain.chainId = chainId
+  }
+  return typeDataDomain
 }
 
 export const CreatorTypedMessage = {
@@ -107,7 +116,7 @@ export const DOMAIN_DEPOSIT = '03000000'
 export const GENESIS_VALIDATOR_ROOT =
   '0000000000000000000000000000000000000000000000000000000000000000'
 
-// Flow used to create defintion
+// Flow used to create definition
 export enum DefinitionFlow {
   Group = 'LP-Group',
   Solo = 'LP-Solo',
@@ -118,3 +127,6 @@ export const DEFAULT_BASE_URL = 'https://api.obol.tech'
 export const DEFAULT_CHAIN_ID = 17000
 
 export const ETHER_TO_GWEI = 10 ** 9
+
+export const TERMS_AND_CONDITIONS_VERSION = 1
+export const TERMS_AND_CONDITIONS_URL = (TERMS_AND_CONDITIONS_VERSION === 1) ? 'https://obol.tech/terms.pdf' : `https://obol.tech/${TERMS_AND_CONDITIONS_VERSION as number}/terms.pdf`
