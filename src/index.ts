@@ -51,11 +51,13 @@ export class Client extends Base {
   }
 
   /**
- * Accepts Obol terms and conditions to be able to create or update data.
- * @returns {Promise<string>} terms and conditions acceptance success message.
- * @throws On unverified signature or wrong hash.
- *
- */
+   * Accepts Obol terms and conditions to be able to create or update data.
+   * @returns {Promise<string>} terms and conditions acceptance success message.
+   * @throws On unverified signature or wrong hash.
+   *
+   * An example of how to use acceptObolLatestTermsAndConditions:
+   * [acceptObolLatestTermsAndConditions](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts#L44)
+   */
   async acceptObolLatestTermsAndConditions (): Promise<string> {
     if (!this.signer) { throw new Error('Signer is required in acceptObolTermsAndConditions') }
 
@@ -100,7 +102,7 @@ export class Client extends Base {
    * @throws On duplicate entries, missing or wrong cluster keys.
    *
    * An example of how to use createClusterDefinition:
-   * [createObolCluster](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts)
+   * [createObolCluster](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts#L59)
    */
   async createClusterDefinition (newCluster: ClusterPayload): Promise<string> {
     if (!this.signer) { throw new Error('Signer is required in createClusterDefinition') }
@@ -158,7 +160,7 @@ export class Client extends Base {
    * @throws On unauthorized, duplicate entries, missing keys, not found cluster or invalid data.
    *
    * An example of how to use acceptClusterDefinition:
-   * [acceptClusterDefinition](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts)
+   * [acceptClusterDefinition](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts#L106)
    */
   async acceptClusterDefinition (
     operatorPayload: OperatorPayload,
@@ -210,7 +212,7 @@ export class Client extends Base {
    * @throws On not found config hash.
    *
    * An example of how to use getClusterDefinition:
-   * [getObolClusterDefinition](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts)
+   * [getObolClusterDefinition](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts#L74)
    */
   async getClusterDefinition (configHash: string): Promise<ClusterDefinition> {
     const clusterDefinition: ClusterDefinition = await this.request(
@@ -229,7 +231,7 @@ export class Client extends Base {
    * @throws On not found cluster definition or lock.
    *
    * An example of how to use getClusterLock:
-   * [getObolClusterLock](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts)
+   * [getObolClusterLock](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts#L89)
    */
   async getClusterLock (configHash: string): Promise<ClusterLock> {
     const lock: ClusterLock = await this.request(
