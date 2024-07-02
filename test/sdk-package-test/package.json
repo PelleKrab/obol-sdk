@@ -12,7 +12,7 @@
     "build": "rm -rf dist && tsc",
     "test:e2e": "jest --config ./jest-e2e.json --runInBand --forceExit"
   },
-  "author": "Obol Labs (https://obol.tech)",
+  "author": "Obol Labs (https://obol.org)",
   "publishConfig": {
     "access": "public"
   },
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/obolnetwork/obol-sdk/issues"
   },
-  "homepage": "https://docs.obol.tech/",
+  "homepage": "https://docs.obol.org/",
   "dependencies": {
     "@obolnetwork/obol-sdk": "file:../..",
     "dotenv": "^16.3.1",

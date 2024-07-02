@@ -20,104 +20,104 @@ export enum FORK_MAPPING {
  */
 export type ClusterOperator = {
   /** The operator address. */
-  address: string
+  address: string;
 
   /** The operator ethereum node record. */
-  enr?: string
+  enr?: string;
 
   /** The cluster fork_version. */
-  fork_version?: string
+  fork_version?: string;
 
   /** The cluster version. */
-  version?: string
+  version?: string;
 
   /** The operator enr signature. */
-  enr_signature?: string
+  enr_signature?: string;
 
   /** The operator configuration signature. */
-  config_signature?: string
-}
+  config_signature?: string;
+};
 
 /**
  * A partial view of `ClusterOperator` with `enr` and `version` as required properties.
  */
 export type OperatorPayload = Partial<ClusterOperator> &
-  Required<Pick<ClusterOperator, 'enr' | 'version'>>
+  Required<Pick<ClusterOperator, 'enr' | 'version'>>;
 
 /**
  * Cluster creator data
  */
 export type ClusterCreator = {
   /** The creator address. */
-  address: string
+  address: string;
   /** The cluster configuration signature. */
-  config_signature?: string
-}
+  config_signature?: string;
+};
 
 /**
  * Validator withdrawal configuration
  */
 export type ClusterValidator = {
   /** The validator fee recipient address. */
-  fee_recipient_address: string
+  fee_recipient_address: string;
 
   /** The validator reward address. */
-  withdrawal_address: string
-}
+  withdrawal_address: string;
+};
 
 /**
  * Cluster configuration
  */
 export type ClusterPayload = {
   /** The cluster name. */
-  name: string
+  name: string;
 
   /** The cluster nodes operators addresses. */
-  operators: ClusterOperator[]
+  operators: ClusterOperator[];
 
   /** The cluster validators information. */
-  validators: ClusterValidator[]
+  validators: ClusterValidator[];
 
   /** The cluster partial deposits in gwei or 32000000000. */
-  deposit_amounts?: string[]
-}
+  deposit_amounts?: string[];
+};
 
 /**
  * Cluster definition data needed for dkg
  */
 export interface ClusterDefinition extends ClusterPayload {
   /** The creator of the cluster. */
-  creator: ClusterCreator
+  creator: ClusterCreator;
 
   /** The cluster configuration version. */
-  version: string
+  version: string;
 
   /** The cluster dkg algorithm. */
-  dkg_algorithm: string
+  dkg_algorithm: string;
 
   /** The cluster fork version. */
-  fork_version: string
+  fork_version: string;
 
   /** The cluster uuid. */
-  uuid: string
+  uuid: string;
 
   /** The cluster creation timestamp. */
-  timestamp: string
+  timestamp: string;
 
   /** The cluster configuration hash. */
-  config_hash: string
+  config_hash: string;
 
   /** The distributed validator threshold. */
-  threshold: number
+  threshold: number;
 
   /** The number of distributed validators in the cluster. */
-  num_validators: number
+  num_validators: number;
 
   /** The cluster partial deposits in gwei or 32000000000. */
-  deposit_amounts?: string[]
+  deposit_amounts?: string[];
 
   /** The hash of the cluster definition. */
-  definition_hash?: string
+  definition_hash?: string;
 }
 
 /**
@@ -125,85 +125,85 @@ export interface ClusterDefinition extends ClusterPayload {
  */
 export type BuilderRegistrationMessage = {
   /** The DV fee recipient. */
-  fee_recipient: string
+  fee_recipient: string;
 
   /** Default is 30000000. */
-  gas_limit: number
+  gas_limit: number;
 
   /** Timestamp when generating cluster lock file. */
-  timestamp: number
+  timestamp: number;
 
   /** The public key of the DV. */
-  pubkey: string
-}
+  pubkey: string;
+};
 
 /**
  * Pre-generated Signed Validator Builder Registration
  */
 export type BuilderRegistration = {
   /** Builder registration message. */
-  message: BuilderRegistrationMessage
+  message: BuilderRegistrationMessage;
 
   /** BLS signature of the builder registration message. */
-  signature: string
-}
+  signature: string;
+};
 
 /**
  * Required deposit data for validator activation
  */
 export type DepositData = {
   /** The public key of the distributed validator. */
-  pubkey: string
+  pubkey: string;
 
   /** The 0x01 withdrawal address of the DV. */
-  withdrawal_credentials: string
+  withdrawal_credentials: string;
 
   /** 32 ethers. */
-  amount: string
+  amount: string;
 
   /** A checksum for DepositData fields . */
-  deposit_data_root: string
+  deposit_data_root: string;
 
   /** BLS signature of the deposit message. */
-  signature: string
-}
+  signature: string;
+};
 
 /**
  * Required deposit data for validator activation
  */
 export type DistributedValidator = {
   /** The public key of the distributed validator. */
-  distributed_public_key: string
+  distributed_public_key: string;
 
   /** The public key of the node distributed validator share. */
-  public_shares: string[]
+  public_shares: string[];
 
   /** The deposit data for activating the DV. */
-  deposit_data?: Partial<DepositData>
+  deposit_data?: Partial<DepositData>;
 
   /** The deposit data with partial amounts or full amount for activating the DV. */
-  partial_deposit_data?: Array<Partial<DepositData>>
+  partial_deposit_data?: Array<Partial<DepositData>>;
 
   /** pre-generated signed validator builder registration to be sent to builder network. */
-  builder_registration?: BuilderRegistration
-}
+  builder_registration?: BuilderRegistration;
+};
 
 /**
  * Cluster Details after DKG is complete
  */
 export type ClusterLock = {
   /** The cluster definition. */
-  cluster_definition: ClusterDefinition
+  cluster_definition: ClusterDefinition;
 
   /** The cluster distributed validators. */
-  distributed_validators: DistributedValidator[]
+  distributed_validators: DistributedValidator[];
 
   /** The cluster bls signature aggregate. */
-  signature_aggregate: string
+  signature_aggregate: string;
 
   /** The hash of the cluster lock. */
-  lock_hash: string
+  lock_hash: string;
 
   /** Node Signature for the lock hash by the node secp256k1 key. */
-  node_signatures?: string[]
-}
+  node_signatures?: string[];
+};
