@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+### [v2.0.0](https://github.com/obolnetwork/obol-sdk/compare/v1.0.17...v2.0.0) (2024-07-29)
+
+> 29 July 2024
+
+- soft launch.
+
 #### [v1.0.17](https://github.com/ObolNetwork/obol-sdk/compare/v1.0.16...v1.0.17)
+
+> 2 July 2024
 
 - use v1.8.0 in cluster creation [`#32`](https://github.com/ObolNetwork/obol-sdk/pull/32)
 - chore(release): v1.0.17 [`#47`](https://github.com/ObolNetwork/obol-sdk/pull/47)
