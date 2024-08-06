@@ -137,11 +137,11 @@ export const hashClusterDefinitionV1X8 = (
       withdrawal_address: fromHexString(validator.withdrawal_address),
     };
   });
-  val.deposit_amounts = (cluster.deposit_amounts as string[]).map(
-    (amount: string) => {
+  if (cluster.deposit_amounts) {
+    val.deposit_amounts = cluster.deposit_amounts.map((amount: string) => {
       return parseInt(amount);
-    },
-  );
+    });
+  }
 
   if (!configOnly) {
     val.config_hash = fromHexString(cluster.config_hash);

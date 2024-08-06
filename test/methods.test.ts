@@ -6,6 +6,7 @@ import {
   clusterLockV1X6,
   clusterLockV1X7,
   clusterLockV1X8,
+  nullDepositAmountsClusterLockV1X8,
 } from './fixtures.js';
 import { SDK_VERSION } from '../src/constants';
 import { Base } from '../src/base';
@@ -246,6 +247,10 @@ describe('Cluster Client without a signer', () => {
     { version: 'v1.6.0', clusterLock: clusterLockV1X6 },
     { version: 'v1.7.0', clusterLock: clusterLockV1X7 },
     { version: 'v1.8.0', clusterLock: clusterLockV1X8 },
+    {
+      version: 'null deposit_amounts v1.8.0',
+      clusterLock: nullDepositAmountsClusterLockV1X8,
+    },
   ])(
     "$version: 'should return true on verified cluster lock'",
     async ({ clusterLock }) => {
@@ -254,6 +259,21 @@ describe('Cluster Client without a signer', () => {
     },
   );
 
+  test('validateCluster should return false for cluster with null deposit_amounts and incorrect partial_deposits', async () => {
+    const partialDeposit =
+      nullDepositAmountsClusterLockV1X8.distributed_validators[0]
+        .partial_deposit_data[0];
+    const isValidLock: boolean = await validateClusterLock({
+      ...nullDepositAmountsClusterLockV1X8,
+      distributed_validators: [
+        {
+          ...nullDepositAmountsClusterLockV1X8.distributed_validators[0],
+          partial_deposit_data: [partialDeposit, partialDeposit],
+        },
+      ],
+    });
+    expect(isValidLock).toEqual(false);
+  });
   test('Finds the hash of the latest version of terms and conditions', async () => {
     const termsAndConditionsHash = await hashTermsAndConditions();
     expect(termsAndConditionsHash).toEqual(
