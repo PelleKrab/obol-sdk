@@ -1,36 +1,44 @@
 import request from 'supertest';
-import { ethers } from 'ethers';
+import { ethers, JsonRpcProvider } from 'ethers';
 import {
   type ClusterDefinition,
   Client,
   type ClusterLock,
 } from '@obolnetwork/obol-sdk';
+import dotenv from 'dotenv';
 
-const mnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
+dotenv.config();
 
-const privateKey = ethers.Wallet.fromPhrase(mnemonic).privateKey;
-
-const wallet = new ethers.Wallet(privateKey);
-
-export const signer = wallet.connect(null);
-
+// known signer
+const privateKey = process.env.PRIVATE_KEY as string;
+const provider = new JsonRpcProvider('https://ethereum-holesky.publicnode.com');
+const wallet = new ethers.Wallet(privateKey, provider);
+export const signer = wallet.connect(provider);
 /* eslint-disable */
 export const client: Client = new Client(
   { baseUrl: 'https://obol-api-nonprod-dev.dev.obol.tech', chainId: 17000 },
   signer as any,
 );
 
-const secondMnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
-
-const secondprivateKey = ethers.Wallet.fromPhrase(secondMnemonic).privateKey;
-
-const secondWallet = new ethers.Wallet(secondprivateKey);
-
-export const secondSigner = secondWallet.connect(null);
-
-export const secondClient: Client = new Client(
+const randomMnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
+const randomprivateKey = ethers.Wallet.fromPhrase(randomMnemonic).privateKey;
+const randomWallet = new ethers.Wallet(randomprivateKey);
+export const randomSigner = randomWallet.connect(null);
+export const randomClient: Client = new Client(
   { baseUrl: 'https://obol-api-nonprod-dev.dev.obol.tech', chainId: 17000 },
-  secondSigner as any,
+  randomSigner as any,
+);
+
+//second random signer
+const secondRandomMnemonic =
+  ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
+const secondRandomprivateKey =
+  ethers.Wallet.fromPhrase(randomMnemonic).privateKey;
+const secondRandomWallet = new ethers.Wallet(randomprivateKey);
+export const secondRandomSigner = randomWallet.connect(null);
+export const secondRandomClient: Client = new Client(
+  { baseUrl: 'https://obol-api-nonprod-dev.dev.obol.tech', chainId: 17000 },
+  secondRandomSigner as any,
 );
 
 export const app = client.baseUrl;

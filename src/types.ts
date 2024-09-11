@@ -118,6 +118,48 @@ export interface ClusterDefinition extends ClusterPayload {
 }
 
 /**
+ * Split Recipient Keys
+ */
+export type SplitRecipient = {
+  /** The split recipient address. */
+  account: string;
+
+  /** The recipient split. */
+  percentAllocation: number;
+};
+
+/**
+ * Split Proxy Params
+ */
+export type TotalSplitPayload = {
+  /** The split recipients addresses and splits. */
+  splitRecipients: SplitRecipient[];
+
+  /** Split percentageNumber allocated for obol retroactive funding, minimum is 1%. */
+  ObolRAFSplit?: number;
+
+  /** The percentageNumber of accrued rewards that is paid to the caller of the distribution function to compensate them for the gas costs of doing so. Cannot be greater than 10%. For example, 5 represents 5%. */
+  distributorFee?: number;
+
+  /** Address that can mutate the split, should be ZeroAddress for immutable split. */
+  controllerAddress?: string;
+};
+
+/**
+ * OWR and Split Proxy Params
+ */
+export interface RewardsSplitPayload extends TotalSplitPayload {
+  /** Address that will reclaim validator principal after exit. */
+  principalRecipient: string;
+
+  /** Amount needed to deploy all validators expected for the OWR/Splitter configuration. */
+  etherAmount: number;
+
+  /** Address that can control where the owr erc-20 tokens can be pushed, if set to zero it goes to splitter or principal address. */
+  recoveryAddress?: string;
+}
+
+/**
  * Unsigned DV Builder Registration Message
  */
 export type BuilderRegistrationMessage = {
@@ -204,3 +246,8 @@ export type ClusterLock = {
   /** Node Signature for the lock hash by the node secp256k1 key. */
   node_signatures?: string[];
 };
+
+/**
+ * String expected to be Ethereum Address
+ */
+export type ETH_ADDRESS = string;

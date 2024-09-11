@@ -1,3 +1,4 @@
+import { type Provider } from 'ethers';
 import { DefinitionFlow } from './constants';
 import { type ClusterDefinition } from './types';
 
@@ -53,4 +54,24 @@ export const definitionFlow = (
     return DefinitionFlow.Charon;
   }
   return null;
+};
+
+export const findDeployedBytecode = async (
+  contractAddress: string,
+  provider: Provider,
+): Promise<string> => {
+  return await provider?.getCode(contractAddress);
+};
+
+export const isContractAvailable = async (
+  contractAddress: string,
+  provider: Provider,
+  bytecode?: string,
+): Promise<boolean> => {
+  const code = await findDeployedBytecode(contractAddress, provider);
+
+  if (bytecode) {
+    return !!code && code === bytecode;
+  }
+  return !!code && code !== '0x' && code !== '0x0';
 };

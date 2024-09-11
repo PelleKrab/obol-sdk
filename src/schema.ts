@@ -1,3 +1,8 @@
+import {
+  DEFAULT_RETROACTIVE_FUNDING_REWARDS_ONLY_SPLIT,
+  DEFAULT_RETROACTIVE_FUNDING_TOTAL_SPLIT,
+} from './constants';
+
 export const operatorPayloadSchema = {
   type: 'object',
   properties: {
@@ -41,13 +46,11 @@ export const definitionSchema = {
         properties: {
           fee_recipient_address: {
             type: 'string',
-            minLength: 42,
-            maxLength: 42,
+            pattern: '^0x[a-fA-F0-9]{40}$',
           },
           withdrawal_address: {
             type: 'string',
-            minLength: 42,
-            maxLength: 42,
+            pattern: '^0x[a-fA-F0-9]{40}$',
           },
         },
         required: ['fee_recipient_address', 'withdrawal_address'],
@@ -63,4 +66,64 @@ export const definitionSchema = {
     },
   },
   required: ['name', 'operators', 'validators'],
+};
+
+export const totalSplitterPayloadSchema = {
+  type: 'object',
+  properties: {
+    splitRecipients: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          account: {
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+          },
+          percentAllocation: {
+            type: 'number',
+          },
+        },
+        required: ['account', 'percentAllocation'],
+      },
+    },
+    ObolRAFSplit: {
+      type: 'number',
+      minimum: DEFAULT_RETROACTIVE_FUNDING_TOTAL_SPLIT,
+    },
+    distributorFee: {
+      type: 'number',
+      maximum: 10,
+      multipleOf: 0.01,
+    },
+    controllerAddress: {
+      type: 'string',
+      pattern: '^0x[a-fA-F0-9]{40}$',
+    },
+    validateSplitRecipients: true,
+  },
+  required: ['splitRecipients'],
+};
+
+export const rewardsSplitterPayloadSchema = {
+  ...totalSplitterPayloadSchema,
+  properties: {
+    ...totalSplitterPayloadSchema.properties,
+    ObolRAFSplit: {
+      type: 'number',
+      minimum: DEFAULT_RETROACTIVE_FUNDING_REWARDS_ONLY_SPLIT,
+    },
+    recoveryAddress: {
+      type: 'string',
+      pattern: '^0x[a-fA-F0-9]{40}$',
+    },
+    etherAmount: {
+      type: 'number',
+    },
+    principalRecipient: {
+      type: 'string',
+      pattern: '^0x[a-fA-F0-9]{40}$',
+    },
+  },
+  required: ['splitRecipients', 'principalRecipient', 'etherAmount'],
 };

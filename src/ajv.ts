@@ -1,7 +1,16 @@
 import Ajv, { type ErrorObject } from 'ajv';
 import { parseUnits } from 'ethers';
+import {
+  type RewardsSplitPayload,
+  type SplitRecipient,
+  type TotalSplitPayload,
+} from './types';
+import {
+  DEFAULT_RETROACTIVE_FUNDING_REWARDS_ONLY_SPLIT,
+  DEFAULT_RETROACTIVE_FUNDING_TOTAL_SPLIT,
+} from './constants';
 
-function validDepositAmounts(data: boolean, deposits: string[]): boolean {
+const validDepositAmounts = (data: boolean, deposits: string[]): boolean => {
   let sum = 0;
   // from ether togwei is same as from gwei to wei
   const maxDeposit = Number(parseUnits('32', 'gwei'));
@@ -24,7 +33,23 @@ function validDepositAmounts(data: boolean, deposits: string[]): boolean {
   } else {
     return true;
   }
-}
+};
+
+const validateSplitRecipients = (
+  _: boolean,
+  data: RewardsSplitPayload | TotalSplitPayload,
+): boolean => {
+  const splitPercentage = data.splitRecipients.reduce(
+    (acc: number, curr: SplitRecipient) => acc + curr.percentAllocation,
+    0,
+  );
+  const ObolRAFSplitParam = data.ObolRAFSplit
+    ? data.ObolRAFSplit
+    : 'principalRecipient' in data
+      ? DEFAULT_RETROACTIVE_FUNDING_REWARDS_ONLY_SPLIT
+      : DEFAULT_RETROACTIVE_FUNDING_TOTAL_SPLIT;
+  return splitPercentage + ObolRAFSplitParam === 100;
+};
 
 export function validatePayload(
   data: any,
@@ -34,6 +59,12 @@ export function validatePayload(
   ajv.addKeyword({
     keyword: 'validDepositAmounts',
     validate: validDepositAmounts,
+    errors: true,
+  });
+
+  ajv.addKeyword({
+    keyword: 'validateSplitRecipients',
+    validate: validateSplitRecipients,
     errors: true,
   });
   const validate = ajv.compile(schema);
