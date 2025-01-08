@@ -132,7 +132,7 @@ describe('Cluster Definition', () => {
     }
   });
 
-  it('should deploy OWR and Splitter', async () => {
+  it('should deploy Splitter', async () => {
     const secondRandomSignerAddress = await secondRandomSigner.getAddress();
     // new splitter
     const { withdrawal_address, fee_recipient_address } =
