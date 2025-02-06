@@ -4,6 +4,7 @@ import {
   clusterLockV1X6,
   clusterLockV1X7,
   clusterLockV1X8,
+  clusterLockWithSafe,
   enr,
   nullDepositAmountsClusterLockV1X8,
 } from '../fixtures';
@@ -17,14 +18,13 @@ import {
   randomSigner,
   signer,
   secondRandomSigner,
+  DEL_AUTH,
 } from './utils';
 import {
   type ClusterDefinition,
   Client,
   validateClusterLock,
 } from '@obolnetwork/obol-sdk';
-
-const DEL_AUTH = process.env.DEL_AUTH;
 
 jest.setTimeout(50000);
 
@@ -183,7 +183,7 @@ describe('Cluster Definition', () => {
             percentAllocation: 60,
           },
         ],
-        principalRecipient: principalRecipient,
+        principalRecipient,
         etherAmount: 2,
         distributorFee: 2,
         controllerAddress: principalRecipient,
@@ -374,7 +374,7 @@ describe('Poll Cluster Lock', () => {
         setTimeout(function () {
           clearInterval(pollReqIntervalId);
           reject(new Error('Time out'));
-        }, 5000);
+        }, 10000);
       }),
       (async () => {
         await updateClusterDef(clusterLockV1X8.cluster_definition);
@@ -405,7 +405,7 @@ describe('Poll Cluster Lock', () => {
         setTimeout(function () {
           clearInterval(pollReqIntervalId);
           reject(new Error('Time out'));
-        }, 5000);
+        }, 10000);
       }),
       (async () => {
         await updateClusterDef(clusterLockV1X8.cluster_definition);
@@ -435,6 +435,10 @@ describe('Poll Cluster Lock', () => {
     {
       version: 'null deposit_amounts v1.8.0',
       clusterLock: nullDepositAmountsClusterLockV1X8,
+    },
+    {
+      version: 'Cluster with safe address v1.8.0',
+      clusterLock: clusterLockWithSafe,
     },
   ])(
     "$version: 'should return true on verified cluster lock'",

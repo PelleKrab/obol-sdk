@@ -11,6 +11,9 @@ import {
   MAINNET_SPLITMAIN_BYTECODE,
 } from './bytecodes';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 export const CONFLICT_ERROR_MSG = 'Conflict';
 
 export const EIP712_DOMAIN_NAME = 'Obol';
@@ -195,3 +198,10 @@ export const DEFAULT_RETROACTIVE_FUNDING_REWARDS_ONLY_SPLIT = 1;
 export const DEFAULT_RETROACTIVE_FUNDING_TOTAL_SPLIT = 0.1;
 
 export const OBOL_SDK_EMAIL = 'sdk@dvlabs.tech';
+
+export const PROVIDER_MAP: Record<number, string> = {
+  1: `${process.env.RPC_MAINNET}`, // Mainnet
+  17000: `${process.env.RPC_HOLESKY}`, // Holesky
+  11155111: `${process.env.RPC_SEPOLIA}`, // Sepolia
+  100: `${process.env.RPC_GNOSIS}`, // Gnosis
+};
