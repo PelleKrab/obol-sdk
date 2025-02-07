@@ -216,7 +216,8 @@ const verifyDefinitionSignatures = async (
     if (definitionType === DefinitionFlow.Solo) {
       return true;
     }
-    return clusterDefinition.operators.every(async operator => {
+
+    for (const operator of clusterDefinition.operators) {
       const isPUTConfigHashSignerValid = await validatePUTConfigHashSigner(
         operator.address,
         operator.config_signature as string,
@@ -238,8 +239,9 @@ const verifyDefinitionSignatures = async (
       if (!isPUTConfigHashSignerValid || !isENRSignerValid) {
         return false;
       }
-      return true;
-    });
+    }
+
+    return true;
   }
 };
 
