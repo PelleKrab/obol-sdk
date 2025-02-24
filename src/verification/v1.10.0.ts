@@ -21,6 +21,7 @@ import {
   ListBasicType,
   ListCompositeType,
   fromHexString,
+  BooleanType,
 } from '@chainsafe/ssz';
 import { type ValueOfFields } from '@chainsafe/ssz/lib/view/container';
 import {
@@ -48,6 +49,7 @@ type DefinitionFieldsV1X10 = {
   deposit_amounts: ListBasicType<UintNumberType>;
   consensus_protocol: ByteListType;
   target_gas_limit: UintNumberType;
+  compounding: BooleanType;
   config_hash?: ByteVectorType;
 };
 
@@ -79,6 +81,7 @@ export const clusterDefinitionContainerTypeV1X10 = (
     ),
     consensus_protocol: new ByteListType(256),
     target_gas_limit: new UintNumberType(8 as UintNumberByteLen),
+    compounding: new BooleanType(),
   };
 
   if (!configOnly) {
@@ -142,6 +145,10 @@ export const hashClusterDefinitionV1X10 = (
   }
   if (cluster.target_gas_limit) {
     val.target_gas_limit = cluster.target_gas_limit;
+  }
+
+  if (cluster.compounding) {
+    val.compounding = cluster.compounding;
   }
 
   if (!configOnly) {

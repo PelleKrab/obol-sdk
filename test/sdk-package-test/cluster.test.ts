@@ -4,9 +4,11 @@ import {
   clusterLockV1X6,
   clusterLockV1X7,
   clusterLockV1X8,
+  clusterLockV1X10,
   clusterLockWithSafe,
   enr,
   nullDepositAmountsClusterLockV1X8,
+  clusterLockWithCompoundingWithdrawals,
 } from '../fixtures';
 import {
   client,
@@ -439,6 +441,11 @@ describe('Poll Cluster Lock', () => {
     {
       version: 'Cluster with safe address v1.8.0',
       clusterLock: clusterLockWithSafe,
+    },
+    { version: 'v1.10.0', clusterLock: clusterLockV1X10 },
+    {
+      version: 'v1.10.0 with compunding withdrawals',
+      clusterLock: clusterLockWithCompoundingWithdrawals,
     },
   ])(
     "$version: 'should return true on verified cluster lock'",

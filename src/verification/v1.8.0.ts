@@ -259,6 +259,7 @@ export const verifyDVV1X8 = (clusterLock: ClusterLock): boolean => {
         depositData as Partial<DepositData>,
         clusterLock.cluster_definition.validators[i].withdrawal_address,
         clusterLock.cluster_definition.fork_version,
+        clusterLock.cluster_definition.compounding,
       );
 
       if (!isValidDepositData) {

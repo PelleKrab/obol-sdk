@@ -354,23 +354,19 @@ export const verifyDepositData = (
   depositData: Partial<DepositData>,
   withdrawalAddress: string,
   forkVersion: string,
+  compounding?: boolean,
 ): { isValidDepositData: boolean; depositDataMsg: Uint8Array } => {
   const depositDomain = computeDomain(
     fromHexString(DOMAIN_DEPOSIT),
     forkVersion,
   );
-  const eth1AddressWithdrawalPrefix = '0x01';
-  const compoundingWithdrawalPrefix = '0x02';
-  if (
-    eth1AddressWithdrawalPrefix +
-      '0'.repeat(22) +
-      withdrawalAddress.toLowerCase().slice(2) !==
-      depositData.withdrawal_credentials &&
-    compoundingWithdrawalPrefix +
-      '0'.repeat(22) +
-      withdrawalAddress.toLowerCase().slice(2) !==
-      depositData.withdrawal_credentials
-  ) {
+  const withdrawalPrefix = compounding ? '0x02' : '0x01';
+  const expectedWithdrawalCredentials =
+    withdrawalPrefix +
+    '0'.repeat(22) +
+    withdrawalAddress.toLowerCase().slice(2);
+
+  if (expectedWithdrawalCredentials !== depositData.withdrawal_credentials) {
     return { isValidDepositData: false, depositDataMsg: new Uint8Array(0) };
   }
 
