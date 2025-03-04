@@ -22,17 +22,16 @@ import * as splitsHelpers from '../src/splitHelpers';
 
 jest.setTimeout(20000);
 
+const mnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
+const privateKey = ethers.Wallet.fromPhrase(mnemonic).privateKey;
+const provider = new JsonRpcProvider('https://ethereum-holesky.publicnode.com');
+const wallet = new ethers.Wallet(privateKey, provider);
+const mockSigner = wallet.connect(provider);
+
 /* eslint no-new: 0 */
 describe('Cluster Client', () => {
   const mockConfigHash =
     '0x1f6c94e6c070393a68c1aa6073a21cb1fd57f0e14d2a475a2958990ab728c2fd';
-  const mnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
-  const privateKey = ethers.Wallet.fromPhrase(mnemonic).privateKey;
-  const provider = new JsonRpcProvider(
-    'https://ethereum-holesky.publicnode.com',
-  );
-  const wallet = new ethers.Wallet(privateKey, provider);
-  const mockSigner = wallet.connect(provider);
 
   const clientInstance = new Client(
     { baseUrl: 'https://obol-api-dev.gcp.obol.tech', chainId: 17000 },
@@ -302,8 +301,7 @@ describe('createObolRewardsSplit', () => {
     clientInstanceWithourSigner: Client,
     mockSplitRecipients: Array<{ account: string; percentAllocation: number }>,
     mockPrincipalRecipient: string,
-    mockEtherAmount: number,
-    mockSigner: ethers.Signer | ethers.Wallet | undefined;
+    mockEtherAmount: number;
   beforeAll(() => {
     jest
       .spyOn(utils, 'isContractAvailable')
@@ -320,13 +318,6 @@ describe('createObolRewardsSplit', () => {
           fee_recipient_address: '0xFeeRecipientAddress',
         }),
     );
-    const mnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
-    const privateKey = ethers.Wallet.fromPhrase(mnemonic).privateKey;
-    const provider = new JsonRpcProvider(
-      'https://ethereum-holesky.publicnode.com',
-    );
-    const wallet = new ethers.Wallet(privateKey, provider);
-    mockSigner = wallet.connect(provider);
 
     clientInstance = new Client(
       { baseUrl: 'https://obol-api-dev.gcp.obol.tech', chainId: 17000 },
@@ -425,7 +416,6 @@ describe('createObolRewardsSplit', () => {
 describe('createObolTotalSplit', () => {
   let clientInstanceWithourSigner: Client,
     mockSplitRecipients: Array<{ account: string; percentAllocation: number }>,
-    mockSigner: ethers.Signer | ethers.Wallet | undefined,
     clientInstance: Client;
   beforeAll(() => {
     jest
@@ -441,14 +431,6 @@ describe('createObolTotalSplit', () => {
       .mockImplementation(
         async () => await Promise.resolve('0xSplitterAddress'),
       );
-
-    const mnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
-    const privateKey = ethers.Wallet.fromPhrase(mnemonic).privateKey;
-    const provider = new JsonRpcProvider(
-      'https://ethereum-holesky.publicnode.com',
-    );
-    const wallet = new ethers.Wallet(privateKey, provider);
-    mockSigner = wallet.connect(provider);
 
     clientInstance = new Client(
       { baseUrl: 'https://obol-api-dev.gcp.obol.tech', chainId: 17000 },
@@ -544,5 +526,69 @@ describe('createObolTotalSplit', () => {
       withdrawal_address: '0xPredictedAddress',
       fee_recipient_address: '0xPredictedAddress',
     });
+  });
+});
+
+describe('getIncentivesByAddress', () => {
+  let clientInstance: Client;
+  beforeAll(() => {
+    jest
+      .spyOn(utils, 'isContractAvailable')
+      .mockImplementation(async () => await Promise.resolve(true));
+    jest
+      .spyOn(splitsHelpers, 'predictSplitterAddress')
+      .mockImplementation(
+        async () => await Promise.resolve('0xPredictedAddress'),
+      );
+    jest
+      .spyOn(splitsHelpers, 'deploySplitterContract')
+      .mockImplementation(
+        async () => await Promise.resolve('0xSplitterAddress'),
+      );
+
+    clientInstance = new Client(
+      { baseUrl: 'https://obol-api-dev.gcp.obol.tech', chainId: 17000 },
+      mockSigner,
+    );
+  });
+
+  test('should return incentives for a valid address', async () => {
+    const mockAddress = '0x1234567890abcdef1234567890abcdef12345678';
+    const mockIncentives = {
+      operator_address: '0x8c00157cae72c4ed6a1f8bfb60205601f0252e26',
+      amount: '100',
+      index: 1,
+      merkle_proof: ['hash1', 'hash2'],
+      contract_address: '0xContract',
+    };
+
+    clientInstance['request'] = jest
+      .fn()
+      .mockReturnValue(Promise.resolve(mockIncentives));
+
+    const incentives = await clientInstance.getIncentivesByAddress(mockAddress);
+    expect(incentives).toEqual(mockIncentives);
+  });
+
+  test('should throw an error if address is not found', async () => {
+    const invalidAddress = '0x0000000000000000000000000000000000000000';
+    clientInstance['request'] = jest
+      .fn()
+      .mockRejectedValue(new Error('Not found'));
+
+    await expect(
+      clientInstance.getIncentivesByAddress(invalidAddress),
+    ).rejects.toThrow('Not found');
+  });
+
+  test('should throw an error if request fails', async () => {
+    const mockAddress = '0x1234567890abcdef1234567890abcdef12345678';
+    clientInstance['request'] = jest
+      .fn()
+      .mockRejectedValue(new Error('Network error'));
+
+    await expect(
+      clientInstance.getIncentivesByAddress(mockAddress),
+    ).rejects.toThrow('Network error');
   });
 });
