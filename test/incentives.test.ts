@@ -213,7 +213,7 @@ describe('Client.incentives', () => {
     expect(result).toEqual(mockIncentives);
 
     expect(global.fetch).toHaveBeenCalledWith(
-      `${baseUrl}/${DEFAULT_BASE_VERSION}/address/incentives/${mockAddress}`,
+      `${baseUrl}/${DEFAULT_BASE_VERSION}/address/incentives/holesky/${mockAddress}`,
       expect.objectContaining({ method: 'GET' }),
     );
   });
