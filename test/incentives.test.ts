@@ -1,8 +1,9 @@
 import { ethers, JsonRpcProvider } from 'ethers';
 import { Client } from '../src/index';
 import * as utils from '../src/utils';
-import * as incentivesHelpers from '../src/incentivesHalpers';
+import * as incentivesHelpers from '../src/incentiveHelpers';
 import { DEFAULT_BASE_VERSION } from '../src/constants';
+import { jest, describe, beforeEach, test, expect } from '@jest/globals';
 
 const mnemonic = ethers.Wallet.createRandom().mnemonic?.phrase ?? '';
 const privateKey = ethers.Wallet.fromPhrase(mnemonic).privateKey;
@@ -11,16 +12,17 @@ const wallet = new ethers.Wallet(privateKey, provider);
 const mockSigner = wallet.connect(provider);
 const baseUrl = 'https://obol-api-dev.gcp.obol.tech';
 
-global.fetch = jest.fn();
+// Fix the type error by properly typing the mock function
+global.fetch = jest.fn() as jest.Mock<Promise<Response>>;
 
 describe('Client.incentives', () => {
   let clientInstance: Client;
   const mockIncentivesData = {
-    contractAddress: '0x1234567890abcdef1234567890abcdef12345678',
+    contract_address: '0x1234567890abcdef1234567890abcdef12345678',
     index: 5,
-    operatorAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
-    amount: 1000000000000000000,
-    merkleProof: [
+    operator_address: '0xabcdef1234567890abcdef1234567890abcdef12',
+    amount: '1000000000000000000',
+    merkle_proof: [
       '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
       '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
     ],
@@ -39,25 +41,41 @@ describe('Client.incentives', () => {
     });
 
     await expect(
-      clientWithoutSigner.incentives.claimIncentives(mockIncentivesData),
+      clientWithoutSigner.incentives.claimIncentives(
+        mockIncentivesData.operator_address,
+      ),
     ).rejects.toThrow('Signer is required in claimIncentives');
   });
 
   test('claimIncentives should throw an error if contract is not available', async () => {
     jest
+      .spyOn(clientInstance.incentives, 'getIncentivesByAddress')
+      .mockResolvedValue(mockIncentivesData);
+
+    jest.spyOn(clientInstance.incentives, 'isClaimed').mockResolvedValue(false);
+
+    jest
       .spyOn(utils, 'isContractAvailable')
       .mockImplementation(async () => await Promise.resolve(false));
 
     await expect(
-      clientInstance.incentives.claimIncentives(mockIncentivesData),
+      clientInstance.incentives.claimIncentives(
+        mockIncentivesData.operator_address,
+      ),
     ).rejects.toThrow(
-      `Merkle Distributor contract is not available at address ${mockIncentivesData.contractAddress}`,
+      `Merkle Distributor contract is not available at address ${mockIncentivesData.contract_address}`,
     );
   });
 
   test('claimIncentives should return txHash on successful claim', async () => {
     const mockTxHash =
       '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+
+    jest
+      .spyOn(clientInstance.incentives, 'getIncentivesByAddress')
+      .mockResolvedValue(mockIncentivesData);
+
+    jest.spyOn(clientInstance.incentives, 'isClaimed').mockResolvedValue(false);
 
     jest
       .spyOn(utils, 'isContractAvailable')
@@ -69,23 +87,61 @@ describe('Client.incentives', () => {
         async () => await Promise.resolve({ txHash: mockTxHash }),
       );
 
-    const result =
-      await clientInstance.incentives.claimIncentives(mockIncentivesData);
+    const result = await clientInstance.incentives.claimIncentives(
+      mockIncentivesData.operator_address,
+    );
 
     expect(result).toEqual({ txHash: mockTxHash });
     expect(
       incentivesHelpers.claimIncentivesFromMerkleDistributor,
     ).toHaveBeenCalledWith({
       signer: mockSigner,
-      contractAddress: mockIncentivesData.contractAddress,
+      contractAddress: mockIncentivesData.contract_address,
       index: mockIncentivesData.index,
-      operatorAddress: mockIncentivesData.operatorAddress,
+      operatorAddress: mockIncentivesData.operator_address,
       amount: mockIncentivesData.amount,
-      merkleProof: mockIncentivesData.merkleProof,
+      merkleProof: mockIncentivesData.merkle_proof,
     });
   });
 
+  test('claimIncentives should return alreadyClaimed when incentives are already claimed', async () => {
+    jest
+      .spyOn(clientInstance.incentives, 'getIncentivesByAddress')
+      .mockResolvedValue(mockIncentivesData);
+
+    jest.spyOn(clientInstance.incentives, 'isClaimed').mockResolvedValue(true);
+
+    const result = await clientInstance.incentives.claimIncentives(
+      mockIncentivesData.operator_address,
+    );
+
+    expect(result).toEqual({ alreadyClaimed: true });
+    expect(
+      incentivesHelpers.claimIncentivesFromMerkleDistributor,
+    ).not.toHaveBeenCalled();
+  });
+
+  test('claimIncentives should throw an error if no incentives found for address', async () => {
+    jest
+      .spyOn(clientInstance.incentives, 'getIncentivesByAddress')
+      .mockRejectedValue(new Error('No incentives found for address'));
+
+    await expect(
+      clientInstance.incentives.claimIncentives(
+        mockIncentivesData.operator_address,
+      ),
+    ).rejects.toThrow(
+      'Failed to claim incentives: No incentives found for address',
+    );
+  });
+
   test('claimIncentives should throw an error if helper function fails', async () => {
+    jest
+      .spyOn(clientInstance.incentives, 'getIncentivesByAddress')
+      .mockResolvedValue(mockIncentivesData);
+
+    jest.spyOn(clientInstance.incentives, 'isClaimed').mockResolvedValue(false);
+
     jest
       .spyOn(utils, 'isContractAvailable')
       .mockImplementation(async () => await Promise.resolve(true));
@@ -97,7 +153,9 @@ describe('Client.incentives', () => {
       });
 
     await expect(
-      clientInstance.incentives.claimIncentives(mockIncentivesData),
+      clientInstance.incentives.claimIncentives(
+        mockIncentivesData.operator_address,
+      ),
     ).rejects.toThrow('Failed to claim incentives: Helper function error');
   });
 
@@ -117,7 +175,7 @@ describe('Client.incentives', () => {
       .mockImplementation(async () => await Promise.resolve(true));
 
     const result = await clientInstance.incentives.isClaimed(
-      mockIncentivesData.contractAddress,
+      mockIncentivesData.contract_address,
       mockIncentivesData.index,
     );
 
@@ -126,9 +184,9 @@ describe('Client.incentives', () => {
       incentivesHelpers.isClaimedFromMerkleDistributor,
     ).toHaveBeenCalledWith(
       clientInstance.incentives.chainId,
-      mockIncentivesData.contractAddress,
+      mockIncentivesData.contract_address,
       mockIncentivesData.index,
-      undefined,
+      {},
     );
   });
 
@@ -138,7 +196,7 @@ describe('Client.incentives', () => {
       .mockImplementation(async () => await Promise.resolve(false));
 
     const result = await clientInstance.incentives.isClaimed(
-      mockIncentivesData.contractAddress,
+      mockIncentivesData.contract_address,
       mockIncentivesData.index,
     );
 
@@ -154,14 +212,13 @@ describe('Client.incentives', () => {
 
     await expect(
       clientInstance.incentives.isClaimed(
-        mockIncentivesData.contractAddress,
+        mockIncentivesData.contract_address,
         mockIncentivesData.index,
       ),
     ).rejects.toThrow('Helper function error');
   });
 
   test('isClaimed should work with a provider and a without signer', async () => {
-    // Create a client without a signer
     const clientWithoutSigner = new Client(
       {
         baseUrl,
@@ -176,7 +233,7 @@ describe('Client.incentives', () => {
       .mockImplementation(async () => await Promise.resolve(true));
 
     const result = await clientWithoutSigner.incentives.isClaimed(
-      mockIncentivesData.contractAddress,
+      mockIncentivesData.contract_address,
       mockIncentivesData.index,
     );
 
@@ -185,7 +242,7 @@ describe('Client.incentives', () => {
       incentivesHelpers.isClaimedFromMerkleDistributor,
     ).toHaveBeenCalledWith(
       clientWithoutSigner.incentives.chainId,
-      mockIncentivesData.contractAddress,
+      mockIncentivesData.contract_address,
       mockIncentivesData.index,
       provider,
     );
