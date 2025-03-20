@@ -1,11 +1,4 @@
-import {
-  ZeroAddress,
-  type Provider,
-  type Signer,
-  type JsonRpcSigner,
-  type JsonRpcProvider,
-  type JsonRpcApiProvider,
-} from 'ethers';
+import { ZeroAddress } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
 import { Base } from './base.js';
 import {
@@ -37,6 +30,8 @@ import {
   type ClusterValidator,
   type ETH_ADDRESS,
   type OWRTranches,
+  type ProviderType,
+  type SignerType,
 } from './types.js';
 import { clusterConfigOrDefinitionHash } from './verification/common.js';
 import { validatePayload } from './ajv.js';
@@ -59,19 +54,28 @@ export * from './types.js';
 export * from './services.js';
 export * from './verification/signature-validator.js';
 export * from './verification/common.js';
+export { Incentives } from './incentives.js';
 
 /**
  * Obol sdk Client can be used for creating, managing and activating distributed validators.
  */
 export class Client extends Base {
-  private readonly signer: Signer | JsonRpcSigner | undefined;
+  /**
+   * The signer used for signing transactions.
+   */
+  private readonly signer: SignerType | undefined;
+
+  /**
+   * The incentives module, responsible for managing Obol tokens distribution.
+   * @type {Incentives}
+   */
   public incentives: Incentives;
-  public provider:
-    | Provider
-    | JsonRpcProvider
-    | JsonRpcApiProvider
-    | undefined
-    | null;
+
+  /**
+   * The blockchain provider, used to interact with the network.
+   * It can be null, undefined, or a valid provider instance and defaults to the Signer provider if Signer is passed.
+   */
+  public provider: ProviderType | undefined | null;
 
   /**
    * @param config - Client configurations
@@ -85,8 +89,8 @@ export class Client extends Base {
    */
   constructor(
     config: { baseUrl?: string; chainId?: number },
-    signer?: Signer | JsonRpcSigner,
-    provider?: Provider | JsonRpcProvider,
+    signer?: SignerType,
+    provider?: ProviderType,
   ) {
     super(config);
     this.signer = signer;
@@ -201,19 +205,19 @@ export class Client extends Base {
 
     const checkSplitMainAddress = await isContractAvailable(
       CHAIN_CONFIGURATION[this.chainId].SPLITMAIN_ADDRESS.address,
-      this.signer.provider as Provider,
+      this.signer.provider as ProviderType,
       CHAIN_CONFIGURATION[this.chainId].SPLITMAIN_ADDRESS.bytecode,
     );
 
     const checkMulticallAddress = await isContractAvailable(
       CHAIN_CONFIGURATION[this.chainId].MULTICALL_ADDRESS.address,
-      this.signer.provider as Provider,
+      this.signer.provider as ProviderType,
       CHAIN_CONFIGURATION[this.chainId].MULTICALL_ADDRESS.bytecode,
     );
 
     const checkOWRFactoryAddress = await isContractAvailable(
       CHAIN_CONFIGURATION[this.chainId].OWR_FACTORY_ADDRESS.address,
-      this.signer.provider as Provider,
+      this.signer.provider as ProviderType,
       CHAIN_CONFIGURATION[this.chainId].OWR_FACTORY_ADDRESS.bytecode,
     );
 
@@ -251,7 +255,7 @@ export class Client extends Base {
 
     const isSplitterDeployed = await isContractAvailable(
       predictedSplitterAddress,
-      this.signer.provider as Provider,
+      this.signer.provider as ProviderType,
     );
 
     const { withdrawal_address, fee_recipient_address } =
@@ -316,7 +320,7 @@ export class Client extends Base {
 
     const checkSplitMainAddress = await isContractAvailable(
       CHAIN_CONFIGURATION[this.chainId].SPLITMAIN_ADDRESS.address,
-      this.signer.provider as Provider,
+      this.signer.provider as ProviderType,
       CHAIN_CONFIGURATION[this.chainId].SPLITMAIN_ADDRESS.bytecode,
     );
 
@@ -349,7 +353,7 @@ export class Client extends Base {
 
     const isSplitterDeployed = await isContractAvailable(
       predictedSplitterAddress,
-      this.signer.provider as Provider,
+      this.signer.provider as ProviderType,
     );
 
     if (!isSplitterDeployed) {

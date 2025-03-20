@@ -1,3 +1,12 @@
+import {
+  type ethers,
+  type JsonRpcApiProvider,
+  type JsonRpcProvider,
+  type JsonRpcSigner,
+  type Provider,
+  type Signer,
+} from 'ethers';
+
 /**
  * Permitted ChainID's
  */
@@ -21,28 +30,14 @@ export enum FORK_MAPPING {
   '0x10000910' = 560048,
 }
 
-/**
- * Permitted Chain Names
- */
 export const FORK_NAMES: Record<number, string> = {
-  /** Mainnet. */
   [FORK_MAPPING['0x00000000']]: 'mainnet',
-
-  /** Goerli/Prater. */
   [FORK_MAPPING['0x00001020']]: 'goerli',
-
-  /** Gnosis Chain. */
   [FORK_MAPPING['0x00000064']]: 'gnosis',
-
-  /** Holesky. */
   [FORK_MAPPING['0x01017000']]: 'holesky',
-
-  /** Sepolia. */
   [FORK_MAPPING['0x90000069']]: 'sepolia',
-
-  /** Hoodi. */
   [FORK_MAPPING['0x10000910']]: 'hoodi',
-};
+} as const;
 
 /**
  * Node operator data
@@ -323,3 +318,22 @@ export type Incentives = {
  * String expected to be Ethereum Address
  */
 export type ETH_ADDRESS = string;
+
+/**
+ * Provider Types
+ */
+export type ProviderType =
+  | Provider
+  | JsonRpcProvider
+  | JsonRpcApiProvider
+  | ethers.BrowserProvider;
+
+/**
+ * Signer Types
+ */
+export type SignerType = Signer | JsonRpcSigner;
+
+/**
+ * claimIncentives Response
+ */
+export type ClaimIncentivesResponse = { txHash: string | null };

@@ -104,7 +104,7 @@ describe('Client.incentives', () => {
     });
   });
 
-  test('claimIncentives should return alreadyClaimed when incentives are already claimed', async () => {
+  test('claimIncentives should return txHash as null when incentives are already claimed', async () => {
     jest
       .spyOn(clientInstance.incentives, 'getIncentivesByAddress')
       .mockResolvedValue(mockIncentivesData);
@@ -115,7 +115,7 @@ describe('Client.incentives', () => {
       mockIncentivesData.operator_address,
     );
 
-    expect(result).toEqual({ alreadyClaimed: true });
+    expect(result).toEqual({ txHash: null });
     expect(
       incentivesHelpers.claimIncentivesFromMerkleDistributor,
     ).not.toHaveBeenCalled();
