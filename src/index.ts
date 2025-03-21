@@ -37,7 +37,6 @@ import { clusterConfigOrDefinitionHash } from './verification/common.js';
 import { validatePayload } from './ajv.js';
 import {
   definitionSchema,
-  soloDefinitionSchema,
   operatorPayloadSchema,
   rewardsSplitterPayloadSchema,
   totalSplitterPayloadSchema,
@@ -401,19 +400,18 @@ export class Client extends Base {
   /**
    * Creates a cluster definition which contains cluster configuration.
    * @param {ClusterPayload} newCluster - The new unique cluster.
-   * @param {boolean} solo - Check the payload against the solo scheme.
    * @returns {Promise<string>} config_hash.
    * @throws On duplicate entries, missing or wrong cluster keys.
    *
    * An example of how to use createClusterDefinition:
    * [createObolCluster](https://github.com/ObolNetwork/obol-sdk-examples/blob/main/TS-Example/index.ts#L59)
    */
-  async createClusterDefinition(newCluster: ClusterPayload, solo?: boolean): Promise<string> {
+  async createClusterDefinition(newCluster: ClusterPayload): Promise<string> {
     if (!this.signer) {
       throw new Error('Signer is required in createClusterDefinition');
     }
 
-    solo ? validatePayload(newCluster, soloDefinitionSchema) : validatePayload(newCluster, definitionSchema);
+    validatePayload(newCluster, definitionSchema);
 
     const clusterConfig: Partial<ClusterDefinition> = {
       ...newCluster,
