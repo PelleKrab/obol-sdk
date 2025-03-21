@@ -31,9 +31,16 @@ export const definitionSchema = {
         properties: {
           address: {
             type: 'string',
-            minLength: 42,
-            maxLength: 42,
           },
+          enr: {
+            type: 'string',
+          },
+          enr_signature: {
+            type: 'string',
+          },
+          config_signature: {
+            type: 'string',
+          }
         },
         required: ['address'],
       },
