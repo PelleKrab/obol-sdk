@@ -16,6 +16,65 @@ export const operatorPayloadSchema = {
   required: ['version', 'enr'],
 };
 
+export const soloDefinitionSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+    },
+    operators: {
+      type: 'array',
+      minItems: 4,
+      uniqueItems: true,
+      items: {
+        type: 'object',
+        properties: {
+          address: {
+            type: 'string',
+          },
+          enr: {
+            type: 'string',
+          },
+          enr_signature: {
+            type: 'string',
+          },
+          config_signature: {
+            type: 'string',
+          }
+        },
+        required: ['address', 'enr', 'enr_signature', 'config_signature'],
+      },
+    },
+    validators: {
+      type: 'array',
+      minItems: 1,
+      items: {
+        type: 'object',
+        properties: {
+          fee_recipient_address: {
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+          },
+          withdrawal_address: {
+            type: 'string',
+            pattern: '^0x[a-fA-F0-9]{40}$',
+          },
+        },
+        required: ['fee_recipient_address', 'withdrawal_address'],
+      },
+    },
+    deposit_amounts: {
+      type: 'array',
+      items: {
+        type: 'string',
+        pattern: '^[0-9]+$',
+      },
+      validDepositAmounts: true,
+    },
+  },
+  required: ['name', 'operators', 'validators'],
+};
+
 export const definitionSchema = {
   type: 'object',
   properties: {
